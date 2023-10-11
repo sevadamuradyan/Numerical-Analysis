@@ -219,8 +219,64 @@ struct LU
     }
 };
 
+struct SimpleIterationForMatrix {
+   
+private:
+    double expression(std::vector<double> vec, std::vector<double> ficent, double b)
+    {
+        return vec[0] * ficent[0] + ficent[1] * vec[1] + ficent[2] * vec[2]+b;
+    }
+public:
+    std::vector<double> Method(std::vector<std::vector<double>> matrix,std::vector<double> b, double epsilion )
+    {
+        std::vector<double> x0 = { 0,0,0 };
+        std::vector<double> x1 = { 1,1,1 };
+        for(int i = 0; i < x1.size();++i)
+        {
+            x1[i] = expression(x0, matrix[i], b[i]);
+        }
+
+        double difx0 = abs(x0[0] - x1[0]);
+        double difx1 = abs(x0[1] - x1[1]);
+        double difx2 = abs(x0[2] - x1[2]);
+
+        double diff = std::max(std::max(difx0, difx1), difx2);
+        while (diff > epsilion)
+        {
+            for (auto& x : x0)
+                std::cout << x << " ";
+            std::cout << "\n";
+            x0 = x1;
+            for (int i = 0; i < x1.size(); ++i)
+            {
+                x1[i] = expression(x0, matrix[i], b[i]);
+            }
+
+             difx0 = abs(x0[0] - x1[0]);
+             difx1 = abs(x0[1] - x1[1]);
+             difx2 = abs(x0[2] - x1[2]);
+
+             diff = std::max(std::max(difx0, difx1), difx2);
+
+        }
+        return x1;
+
+    }
+
+};
+
 int main()
 {
+	std::vector<std::vector<double>> a ={{0.1, -0.3,0.1},{0.4, 0.2, -0.3},{0.3,-0.1,0.5}};
+	std::vector<double> b = { -1, 2,1};
+
+	SimpleIterationForMatrix ex1;
+	std::vector<double> result = ex1.Method(a, b, 0.01);
+    
+	for (auto& x : result)
+        	std::cout << x << " ";
+
+	
 	std::vector<std::vector<double>> a ={{-2, 3, 6},{4, -1, 3},{1, 7, -1}};
 	std::vector<double> b = { 5, -5,6};
 
